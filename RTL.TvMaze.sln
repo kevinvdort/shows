@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTL.TvMaze.Api.Shows", "RTL.TvMaze.Api.Shows\RTL.TvMaze.Api.Shows.csproj", "{72C2A205-FCAF-4EFA-81B1-795C210AD434}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTL.TvMaze.Domain", "RTL.TvMaze.Domain\RTL.TvMaze.Domain.csproj", "{1AE6785D-F435-46AA-981F-49DA2D171D31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTL.TvMaze.Infrastructure", "RTL.TvMaze.Infrastructure\RTL.TvMaze.Infrastructure.csproj", "{6D9005E6-9B3A-4B20-8985-E08B12A2B9B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTL.TvMaze.Api.Scraper", "RTL.TvMaze.Api.Scraper\RTL.TvMaze.Api.Scraper.csproj", "{26233B11-67E4-4D2C-B39D-FB7E120DA927}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72C2A205-FCAF-4EFA-81B1-795C210AD434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C2A205-FCAF-4EFA-81B1-795C210AD434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C2A205-FCAF-4EFA-81B1-795C210AD434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C2A205-FCAF-4EFA-81B1-795C210AD434}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AE6785D-F435-46AA-981F-49DA2D171D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AE6785D-F435-46AA-981F-49DA2D171D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AE6785D-F435-46AA-981F-49DA2D171D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AE6785D-F435-46AA-981F-49DA2D171D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D9005E6-9B3A-4B20-8985-E08B12A2B9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D9005E6-9B3A-4B20-8985-E08B12A2B9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D9005E6-9B3A-4B20-8985-E08B12A2B9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D9005E6-9B3A-4B20-8985-E08B12A2B9B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26233B11-67E4-4D2C-B39D-FB7E120DA927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26233B11-67E4-4D2C-B39D-FB7E120DA927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26233B11-67E4-4D2C-B39D-FB7E120DA927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26233B11-67E4-4D2C-B39D-FB7E120DA927}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CCF3F97-6C03-449F-9AD6-5EB6C0AB421E}
+	EndGlobalSection
+EndGlobal

@@ -9,18 +9,22 @@ using System.Threading;
 using RTL.TvMaze.Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 using RTL.TvMaze.Infrastructure.Extensions;
+using System;
 
 namespace RTL.TvMaze.Infrastructure.Services
 {
-    public class HttpTvMazeApiService : IHttpTvMazeService
+    public class HttpTvMazeApiService : IHttpTvMazeApiService
     {
         private readonly IOptions<TvMazeApiSettings> tvMazeApiSettings;
+        private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<HttpTvMazeApiService> logger;
 
-        public HttpTvMazeApiService(IOptions<TvMazeApiSettings> tvMazeApiSettings, 
+        public HttpTvMazeApiService(IOptions<TvMazeApiSettings> tvMazeApiSettings,
+                                    IHttpClientFactory httpClientFactory,
                                     ILogger<HttpTvMazeApiService> logger)
         {
             this.tvMazeApiSettings = tvMazeApiSettings;
+            this.httpClientFactory = httpClientFactory;
             this.logger = logger;
         }
 
@@ -103,6 +107,16 @@ namespace RTL.TvMaze.Infrastructure.Services
             }
 
             return tvMazeData;
+        }
+
+        public async Task<IEnumerable<TvMazeApiCastModel>> DownloadShowIndexV2()
+        {
+            var client = httpClientFactory.CreateClient("TvMazeApi");
+
+            await client.GetAsync($"/shows?page=0");
+
+
+            throw new NotImplementedException();
         }
     }
 }

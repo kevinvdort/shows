@@ -15,11 +15,11 @@ namespace RTL.TvMaze.Domain.TvMaze.Queries
     public class DownloadShowIndexQueryHandler : IRequestHandler<DownloadShowIndexQuery, DownloadShowIndexModel>
     {
         private readonly IMapper mapper;
-        private readonly IHttpTvMazeService httpScrapeService;
+        private readonly IHttpTvMazeApiService httpScrapeService;
         private readonly ILogger<DownloadShowIndexQueryHandler> logger;
 
         public DownloadShowIndexQueryHandler(IMapper mapper,
-                                            IHttpTvMazeService httpScrapeService,
+                                            IHttpTvMazeApiService httpScrapeService,
                                             ILogger<DownloadShowIndexQueryHandler> logger)
         {
             this.mapper = mapper;

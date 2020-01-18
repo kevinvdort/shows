@@ -13,6 +13,11 @@ using AutoMapper;
 using RTL.TvMaze.Infrastructure.Entities;
 using RTL.TvMaze.Domain.TvMaze.Queries;
 using RTL.TvMaze.Api.Shows.Mapping;
+using Microsoft.Extensions.Hosting;
+using RTL.TvMaze.Infrastructure.Services;
+using RTL.TvMaze.Domain.TvMaze.Comparers;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net.Http;
 
 namespace RTL.TvMaze.Api
 {
@@ -31,6 +36,8 @@ namespace RTL.TvMaze.Api
             var infrastructureAssembly = AppDomain.CurrentDomain.Load("RTL.TvMaze.Domain");
             services.AddMediatR(infrastructureAssembly);
 
+            services.AddControllers();
+
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
             services.AddDbContext<RTLDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TvMazeDb")));
@@ -45,9 +52,16 @@ namespace RTL.TvMaze.Api
             services.AddTransient<ITvMazeShowIndexRepository, TvMazeShowIndexRepository>();
             services.AddTransient<ITvMazeShowCastRepository, TvMazeShowCastRepository>();
             services.AddTransient<ITvMazePersonRepository, TvMazePersonRepository>();
+            services.AddTransient<ITvMazeCastModelEqualityComparer, TvMazeCastModelEqualityComparer>();
+
+            services.AddHttpClient("TvMazeApi", client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetSection("TvMazeApiSettings").Value);
+                client.DefaultRequestHeaders.Add("User-Agent", "TvMazeApi");
+            });
 
             services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                    .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddSwaggerGen(c =>
             {
@@ -56,7 +70,7 @@ namespace RTL.TvMaze.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -69,7 +83,24 @@ namespace RTL.TvMaze.Api
 
             app.UseCors();
 
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            var webSocketOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            };
+            app.UseWebSockets();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

@@ -53,7 +53,7 @@ namespace RTL.TvMaze.Infrastructure.Entities
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PK_TV_MAZE_SHOW")
-                    .ForSqlServerIsClustered(false);
+                    .IsClustered(false);
 
                 entity.ToTable("tv_maze_show");
 
@@ -75,7 +75,7 @@ namespace RTL.TvMaze.Infrastructure.Entities
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PK_TV_MAZE_SHOW_CAST")
-                    .ForSqlServerIsClustered(false);
+                    .IsClustered(false);
 
                 entity.ToTable("tv_maze_show_cast");
 
@@ -104,7 +104,7 @@ namespace RTL.TvMaze.Infrastructure.Entities
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PK_TV_MAZE_SHOW_INDEX")
-                    .ForSqlServerIsClustered(false);
+                    .IsClustered(false);
 
                 entity.ToTable("tv_maze_show_index");
 

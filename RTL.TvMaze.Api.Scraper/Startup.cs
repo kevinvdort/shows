@@ -16,6 +16,8 @@ using RTL.TvMaze.Domain.TvMaze.Queries;
 using RTL.TvMaze.Domain.TvMaze.Comparers;
 using RTL.TvMaze.Infrastructure.Configurations;
 using RTL.TvMaze.Api.Scraper.Configurations;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace RTL.TvMaze.Api.Scraper
 {
@@ -33,26 +35,36 @@ namespace RTL.TvMaze.Api.Scraper
             var infrastructureAssembly = AppDomain.CurrentDomain.Load("RTL.TvMaze.Domain");
             services.AddMediatR(infrastructureAssembly);
 
+            services.AddControllers();
+
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
             services.Configure<TvMazeApiSettings>(Configuration.GetSection("TvMazeApiSettings"));
             services.Configure<DownloadSettings>(Configuration.GetSection("DownloadSettings"));
 
             services.AddDbContext<RTLDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TvMazeDb")));
 
-            services.AddAutoMapper(config => {
+            services.AddAutoMapper(config =>
+            {
                 config.AddProfile<DownloadShowIndexProfile>();
                 config.AddProfile<GetLatestShowIndexScanProfile>();
             }, typeof(DownloadShowIndexProfile).Assembly);
 
-            services.AddTransient<IHttpTvMazeService, HttpTvMazeApiService>();
+            services.AddTransient<IHttpTvMazeApiService, HttpTvMazeApiService>();
             services.AddTransient<ITvMazeShowRepository, TvMazeShowRepository>();
             services.AddTransient<ITvMazeShowIndexRepository, TvMazeShowIndexRepository>();
             services.AddTransient<ITvMazeShowCastRepository, TvMazeShowCastRepository>();
             services.AddTransient<ITvMazePersonRepository, TvMazePersonRepository>();
             services.AddTransient<ITvMazeCastModelEqualityComparer, TvMazeCastModelEqualityComparer>();
 
+            services.AddHttpClient("TvMazeApi", client =>
+            {
+                Configuration
+                client.BaseAddress = new Uri();
+                client.DefaultRequestHeaders.Add("User-Agent", "TvMazeApi");
+            });
+
             services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                    .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddSwaggerGen(c =>
             {
@@ -60,7 +72,7 @@ namespace RTL.TvMaze.Api.Scraper
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -73,7 +85,24 @@ namespace RTL.TvMaze.Api.Scraper
 
             app.UseCors();
 
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
+            var webSocketOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            };
+            app.UseWebSockets();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

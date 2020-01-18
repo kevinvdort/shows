@@ -15,11 +15,11 @@ namespace RTL.TvMaze.Domain.TvMaze.Queries
     public class DownloadCastFromShowsQueryHandler : IRequestHandler<DownloadCastFromShowsQuery, DownloadCastFromShowsModel>
     {
         private readonly IMapper mapper;
-        private readonly IHttpTvMazeService httpScrapeService;
+        private readonly IHttpTvMazeApiService httpScrapeService;
         private readonly ILogger<DownloadCastFromShowsQueryHandler> logger;
 
         public DownloadCastFromShowsQueryHandler(IMapper mapper,
-                                          IHttpTvMazeService httpScrapeService,
+                                          IHttpTvMazeApiService httpScrapeService,
                                           ILogger<DownloadCastFromShowsQueryHandler> logger)
         {
             this.mapper = mapper;
@@ -39,7 +39,7 @@ namespace RTL.TvMaze.Domain.TvMaze.Queries
 
                 var downloadStopWatch = Stopwatch.StartNew();
 
-                var castCollection = await httpScrapeService.DownloadCastFromShows(request.Shows);
+                var castCollection = await httpScrapeService.DownloadShowIndexV2();
 
                 downloadStopWatch.Stop();
 

@@ -36,8 +36,14 @@ namespace RTL.TvMaze.Domain.TvMaze.Commands
             this.logger = logger;
         }
 
-        public async Task<bool> Handle(InsertOrUpdateShowAndCastCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(InsertOrUpdateShowAndCastCommand request,
+                                       CancellationToken cancellationToken)
         {
+            if(request is null)
+            {
+                return false;
+            }
+
             try
             {
                 logger.LogInformation("Inserting data into database");

@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 
 namespace RTL.TvMaze.Infrastructure.Services
 {
-    public interface IHttpTvMazeService
+    public interface IHttpTvMazeApiService
     {
         Task<IEnumerable<TvMazeApiShowModel>> DownloadShowIndex();
 
         Task<IEnumerable<TvMazeApiCastModel>> DownloadCastFromShows(IEnumerable<int> shows);
+
+        Task<IEnumerable<TvMazeApiCastModel>> DownloadShowIndexV2();
     }
 }

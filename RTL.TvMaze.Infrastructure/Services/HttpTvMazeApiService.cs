@@ -34,11 +34,11 @@ namespace RTL.TvMaze.Infrastructure.Services
             int pageNumber = 0;
             var tvMazeData = new List<TvMazeApiShowModel>();
 
-            using (var httpClient = new HttpClient())
+            using (var httpClient = httpClientFactory.CreateClient("TvMazeApi"))
             {
                 while (!tvMazeFullIndex)
                 {
-                    using (var response = await httpClient.GetAsync($"{tvMazeApiSettings.Value.BaseUrl}/shows?page={pageNumber}"))
+                    using (var response = await httpClient.GetAsync($"shows?page={pageNumber}"))
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
                         var singleSetTvMazeData = JsonConvert.DeserializeObject<List<TvMazeApiShowModel>>(apiResponse);
@@ -56,67 +56,55 @@ namespace RTL.TvMaze.Infrastructure.Services
 
 #if DEBUG 
                     // Debug purposses only!
-                    if(pageNumber == 1)
+                    if (pageNumber == 1)
                     {
                         break;
                     }
 #endif
                 }
             }
-
             return tvMazeData;
         }
 
         public async Task<IEnumerable<TvMazeApiCastModel>> DownloadCastFromShows(IEnumerable<int> shows)
         {
-            var tvMazeData = new List<TvMazeApiCastModel>();
+            var tvMazeApiCastModels = new List<TvMazeApiCastModel>();
 
-            using (var httpClient = new HttpClient())
+            // According to the documentation from TV Maze, at least 20 requests (/shows/id/cast) per 10 seconds.
+            var showThrottledChunks = shows.ToArray().Split(20);
+
+            using (var httpClient = httpClientFactory.CreateClient("TvMazeApi"))
             {
-                var showThrottledChunks = shows.ToArray().Split(20);
-
                 foreach (var showChunk in showThrottledChunks)
                 {
                     foreach (var id in showChunk)
                     {
-                        using (var response = await httpClient.GetAsync($"{tvMazeApiSettings.Value.BaseUrl}/shows/{id}/cast"))
+                        using var response = await httpClient.GetAsync($"shows/{id}/cast");
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+
+                        try
                         {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
+                            var tvMazeApiPeopleModelCollection = JsonConvert.DeserializeObject<List<TvMazeApiCastModel>>(apiResponse);
 
-                            try
+                            foreach (var cast in tvMazeApiPeopleModelCollection)
                             {
-                                var tvMazeApiPeopleModelCollection = JsonConvert.DeserializeObject<List<TvMazeApiCastModel>>(apiResponse);
-
-                                foreach (var cast in tvMazeApiPeopleModelCollection)
-                                {
-                                    cast.ShowId = id;
-                                    tvMazeData.Add(cast);
-                                }
+                                cast.ShowId = id;
+                                tvMazeApiCastModels.Add(cast);
                             }
-                            catch (HttpRequestException exception)
-                            {
-                                logger.LogError(exception, "Error downloading people");
-                                throw exception;
-                            }
+                        }
+                        catch (HttpRequestException exception)
+                        {
+                            logger.LogError(exception, "Error downloading people");
+                            throw exception;
                         }
                     }
 
-                    // API calls are rate limited to allow at least 20 calls every 10 seconds per IP address.
-                    Thread.Sleep(10000);
+                    // At least 20 calls every 10 seconds per IP address.
+                    await Task.Delay(10000);
                 }
             }
 
-            return tvMazeData;
-        }
-
-        public async Task<IEnumerable<TvMazeApiCastModel>> DownloadShowIndexV2()
-        {
-            var client = httpClientFactory.CreateClient("TvMazeApi");
-
-            await client.GetAsync($"/shows?page=0");
-
-
-            throw new NotImplementedException();
+            return tvMazeApiCastModels;
         }
     }
 }

@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RTL.TvMaze.Api.Shows.Models;
-using RTL.TvMaze.Domain.TvMaze.Models;
 using RTL.TvMaze.Domain.TvMaze.Queries;
 using System.Collections.Generic;
 using System.Threading.Tasks;

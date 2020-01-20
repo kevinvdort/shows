@@ -9,7 +9,5 @@ namespace RTL.TvMaze.Infrastructure.Services
         Task<IEnumerable<TvMazeApiShowModel>> DownloadShowIndex();
 
         Task<IEnumerable<TvMazeApiCastModel>> DownloadCastFromShows(IEnumerable<int> shows);
-
-        Task<IEnumerable<TvMazeApiCastModel>> DownloadShowIndexV2();
     }
 }

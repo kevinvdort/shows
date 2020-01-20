@@ -14,10 +14,8 @@ using RTL.TvMaze.Infrastructure.Entities;
 using RTL.TvMaze.Domain.TvMaze.Queries;
 using RTL.TvMaze.Api.Shows.Mapping;
 using Microsoft.Extensions.Hosting;
-using RTL.TvMaze.Infrastructure.Services;
 using RTL.TvMaze.Domain.TvMaze.Comparers;
 using Microsoft.AspNetCore.HttpOverrides;
-using System.Net.Http;
 
 namespace RTL.TvMaze.Api
 {

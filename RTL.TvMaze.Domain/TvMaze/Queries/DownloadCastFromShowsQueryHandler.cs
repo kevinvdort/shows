@@ -39,7 +39,7 @@ namespace RTL.TvMaze.Domain.TvMaze.Queries
 
                 var downloadStopWatch = Stopwatch.StartNew();
 
-                var castCollection = await httpScrapeService.DownloadShowIndexV2();
+                var castCollection = await httpScrapeService.DownloadCastFromShows(request.Shows);
 
                 downloadStopWatch.Stop();
 

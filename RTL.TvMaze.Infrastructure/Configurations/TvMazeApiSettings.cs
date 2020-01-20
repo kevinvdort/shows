@@ -1,7 +1,9 @@
-﻿namespace RTL.TvMaze.Infrastructure.Configurations
+﻿using System;
+
+namespace RTL.TvMaze.Infrastructure.Configurations
 {
     public class TvMazeApiSettings
     {
-        public string BaseUrl { get; set; }
+        public Uri BaseAddress { get; set; }
     }
 }

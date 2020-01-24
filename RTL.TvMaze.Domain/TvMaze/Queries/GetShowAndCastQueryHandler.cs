@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using RTL.TvMaze.Domain.TvMaze.Models;
 using RTL.TvMaze.Infrastructure.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

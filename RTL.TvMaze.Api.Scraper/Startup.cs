@@ -18,8 +18,8 @@ using RTL.TvMaze.Infrastructure.Configurations;
 using RTL.TvMaze.Api.Scraper.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Options;
 using Polly;
+using RTL.TvMaze.Infrastructure.HttpClient;
 
 namespace RTL.TvMaze.Api.Scraper
 {
@@ -58,12 +58,8 @@ namespace RTL.TvMaze.Api.Scraper
             services.AddTransient<ITvMazePersonRepository, TvMazePersonRepository>();
             services.AddTransient<ITvMazeCastModelEqualityComparer, TvMazeCastModelEqualityComparer>();
 
-            services.AddHttpClient("TvMazeApi", (sp, cc) =>
-                    {
-                        var tvMazeApiSettings = sp.GetRequiredService<IOptions<TvMazeApiSettings>>().Value;
-                        cc.BaseAddress = tvMazeApiSettings.BaseAddress;
-                    })
-                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, sleepDurationProvider:_ => TimeSpan.FromSeconds(10)));
+            services.AddHttpClient<TvMazeApiHttpClient>()
+                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(10))); ;
 
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Latest);

@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Routing;
 using RTL.TvMaze.Infrastructure.Services;
 using RTL.TvMaze.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
@@ -59,10 +58,7 @@ namespace RTL.TvMaze.Api.Scraper
             services.AddTransient<ITvMazeCastModelEqualityComparer, TvMazeCastModelEqualityComparer>();
 
             services.AddHttpClient<TvMazeApiHttpClient>()
-                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(10))); ;
-
-            services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Latest);
+                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(10)));
 
             services.AddSwaggerGen(c =>
             {
@@ -70,7 +66,7 @@ namespace RTL.TvMaze.Api.Scraper
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -84,6 +80,8 @@ namespace RTL.TvMaze.Api.Scraper
             app.UseCors();
 
             app.UseRouting();
+
+            app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

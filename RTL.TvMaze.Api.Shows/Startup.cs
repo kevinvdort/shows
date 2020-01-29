@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Routing;
 using RTL.TvMaze.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +15,9 @@ using RTL.TvMaze.Api.Shows.Mapping;
 using Microsoft.Extensions.Hosting;
 using RTL.TvMaze.Domain.TvMaze.Comparers;
 using Microsoft.AspNetCore.HttpOverrides;
+using RTL.TvMaze.Infrastructure.HttpClient;
+using Polly;
+using RTL.TvMaze.Infrastructure.Services;
 
 namespace RTL.TvMaze.Api
 {
@@ -46,20 +48,15 @@ namespace RTL.TvMaze.Api
                 config.AddProfile<ShowProfile>();
             }, typeof(GetShowAndCastProfile).Assembly, typeof(ShowProfile).Assembly);
 
+            services.AddTransient<IHttpTvMazeApiService, HttpTvMazeApiService>();
             services.AddTransient<ITvMazeShowRepository, TvMazeShowRepository>();
             services.AddTransient<ITvMazeShowIndexRepository, TvMazeShowIndexRepository>();
             services.AddTransient<ITvMazeShowCastRepository, TvMazeShowCastRepository>();
             services.AddTransient<ITvMazePersonRepository, TvMazePersonRepository>();
             services.AddTransient<ITvMazeCastModelEqualityComparer, TvMazeCastModelEqualityComparer>();
 
-            services.AddHttpClient("TvMazeApi", client =>
-            {
-                client.BaseAddress = new Uri(Configuration.GetSection("TvMazeApiSettings").Value);
-                client.DefaultRequestHeaders.Add("User-Agent", "TvMazeApi");
-            });
-
-            services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddHttpClient<TvMazeApiHttpClient>()
+                    .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(10)));
 
             services.AddSwaggerGen(c =>
             {
@@ -68,7 +65,7 @@ namespace RTL.TvMaze.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -92,13 +89,6 @@ namespace RTL.TvMaze.Api
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
-            var webSocketOptions = new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
-            };
-            app.UseWebSockets();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

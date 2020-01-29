@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  rtl.tvmaze.app:
+    image: ${DOCKER_REGISTRY-}rtltvmazeapp
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "32779:443"
+    build:
+      context: .
+      dockerfile: RTL.TvMaze.App/Dockerfile
+    networks:
+      - localdev
+
+  rtl.tvmaze.api.shows:
+    image: ${DOCKER_REGISTRY-}rtltvmazeapishows
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "44331:44331"
+    build:
+      context: .
+      dockerfile: RTL.TvMaze.Api.Shows/Dockerfile
+    networks:
+      - localdev
+    extra_hosts:
+      - "rtl.tvmaze.api.shows:127.0.0.1"
+
+networks:
+  localdev:

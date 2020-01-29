@@ -3,10 +3,10 @@
   "profiles": {
     "Docker": {
       "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "launchBrowser": false,
       "publishAllPorts": true,
-      "useSSL": false
+      "sslPort": 44333,
+      "useSSL": true
     }
   }
 }

@@ -2,9 +2,10 @@
   "profiles": {
     "Docker": {
       "commandName": "Docker",
-      "launchBrowser": false,
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
-      "sslPort": 44331,
+      "sslPort": 32779,
       "useSSL": true
     }
   }

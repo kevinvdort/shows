@@ -8,6 +8,9 @@ nupkg/
 # Visual Studio Code
 .vscode
 
+# Rosyln Analyzer
+.editorconfig
+
 # Rider
 .idea
 

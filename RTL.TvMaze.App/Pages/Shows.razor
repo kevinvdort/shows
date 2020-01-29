@@ -1,0 +1,54 @@
+﻿@page "/shows"
+
+@using TvMaze.App.HttpClients
+@inject TvMazeApiShowsHttpClient tvMazeApiShowsHttpClient
+
+<h1>Shows</h1>
+
+<p>This component demonstrates fetching data from a RESTish API.</p>
+
+@if (_shows != null)
+{
+    @foreach (var show in _shows)
+    {
+        <div>
+            <h2>@show.Name</h2>
+            @if (show.Cast != null)
+            {
+                @foreach (var person in show.Cast)
+                {
+                    <ul>
+                        <li>
+                            <h3>@person.Name</h3>
+                            <span>@person.Birthday?.ToLongDateString()</span>
+                        </li>
+                    </ul>
+                }
+            }
+        </div>
+    }
+}
+
+@code {
+
+    private class Show
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public IEnumerable<Person> Cast { get; set; }
+    }
+
+    private class Person
+    {
+        public string Name { get; set; }
+
+        public DateTime? Birthday { get; set; }
+    }
+
+    private IEnumerable<Show> _shows;
+
+    protected override async Task OnInitializedAsync() => _shows = await tvMazeApiShowsHttpClient.HttpClient.GetJsonAsync<IEnumerable<Show>>("api/shows?page=1&size=3");
+
+}
